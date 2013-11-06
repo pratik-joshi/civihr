@@ -72,6 +72,22 @@ function hrvisa_civicrm_xmlMenu(&$files) {
  * Implementation of hook_civicrm_install
  */
 function hrvisa_civicrm_install() {
+  if (!CRM_Core_OptionGroup::getValue('activity_type', 'Visa Expiration', 'name')) {
+    // create activity_type 'Visa Expiration'
+    $params = array(
+      'weight' => 1,
+      'label' => 'Visa Expiration',
+      'filter' => 0,
+      'is_active' => 1,
+      'is_default' => 0,
+    );
+    $result = civicrm_api3('activity_type', 'create', $params);
+    if (CRM_Utils_Array::value('is_error', $result, FALSE)) {
+      CRM_Core_Error::debug_var("Failed to create activity type 'Visa  Expiration'", $result);
+      throw new CRM_Core_Exception('Failed to create activity type \'Visa  Expiration\'');
+    }
+  }
+  // TODO : set weekly reminder for Visa Expiration activities
   return _hrvisa_civix_civicrm_install();
 }
 
@@ -79,6 +95,7 @@ function hrvisa_civicrm_install() {
  * Implementation of hook_civicrm_uninstall
  */
 function hrvisa_civicrm_uninstall() {
+  // TODO : delete weekly reminder for Visa Expiration activities
   return _hrvisa_civix_civicrm_uninstall();
 }
 
@@ -86,6 +103,7 @@ function hrvisa_civicrm_uninstall() {
  * Implementation of hook_civicrm_enable
  */
 function hrvisa_civicrm_enable() {
+  // TODO : enable weekly reminder for Visa Expiration activities
   return _hrvisa_civix_civicrm_enable();
 }
 
@@ -93,6 +111,7 @@ function hrvisa_civicrm_enable() {
  * Implementation of hook_civicrm_disable
  */
 function hrvisa_civicrm_disable() {
+  // TODO : disable weekly reminder for Visa Expiration activities
   return _hrvisa_civix_civicrm_disable();
 }
 
@@ -162,5 +181,18 @@ function hrvisa_civicrm_pageRun($page) {
   if ($page instanceof CRM_Contact_Page_View_Summary) {
     CRM_Core_Resources::singleton()
       ->addScriptFile('civicrm', 'js/jquery/jquery.crmRevisionLink.js', CRM_Core_Resources::DEFAULT_WEIGHT, 'html-header');
+  }
+}
+
+/**
+ * Implementation of hook_civicrm_custom
+ */
+function hrvisa_civicrm_custom($op, $groupID, $entityID, &$params) {
+  if ($op != 'create' && $op != 'edit') {
+    return;
+  }
+
+  if ($groupID == hrvisa_getCustomGroupId()) {
+    CRM_HRVisa_Activity::sync($entityID);
   }
 }
