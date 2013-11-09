@@ -58,7 +58,7 @@ class CRM_HRVisa_Activity {
       $activityStatuses = CRM_Core_OptionGroup::values('activity_status', FALSE, FALSE, FALSE, NULL, 'name');
 
       $params = array(
-        'source_contact_id' => $contactId,
+        'target_contact_id' => $contactId,
         'activity_type_id' => $activityTypeId,
         'sequential' => 1
       );
@@ -75,7 +75,7 @@ class CRM_HRVisa_Activity {
           // update the last activity and log a error
           $result = array_pop($result['values']);
           $logError =
-            "Multiple 'Visa Expiration' activities exists for source contact with id : {$contactId}, so updating last activity with id : {$result['id']}";
+            "Multiple 'Visa Expiration' activities exists for target contact with id : {$contactId}, so updating last activity with id : {$result['id']}";
         }
         $activityParams['id'] = $result['id'];
         $result = civicrm_api3('activity', 'create', $activityParams);
@@ -88,7 +88,7 @@ class CRM_HRVisa_Activity {
         // if no activity create a new one only if 'visa is required'
         if ($isVisaRequired) {
           $activityParams = array(
-            'source_contact_id' => $contactId,
+            'target_contact_id' => $contactId,
             'activity_type_id' => $activityTypeId,
             'subject' => 'Visa Expiration',
             'activity_date_time' => $lastestVisaExpirationDate,

@@ -192,7 +192,9 @@ function hrvisa_civicrm_custom($op, $groupID, $entityID, &$params) {
     return;
   }
 
-  if ($groupID == hrvisa_getCustomGroupId()) {
+  $groups = CRM_Core_PseudoConstant::get('CRM_Core_BAO_CustomField', 'custom_group_id', array('labelColumn' => 'name'));
+  $groupName = CRM_Utils_Array::value($groupID, $groups);
+  if ($groupName == 'Immigration' || $groupName == 'Extended_Demographics') {
     CRM_HRVisa_Activity::sync($entityID);
   }
 }
