@@ -82,6 +82,7 @@ function hrvisa_civicrm_install() {
       'is_default' => 0,
     );
     $result = civicrm_api3('activity_type', 'create', $params);
+    CRM_Core_Error::debug_var( '$result', $result );
     if (CRM_Utils_Array::value('is_error', $result, FALSE)) {
       CRM_Core_Error::debug_var("Failed to create activity type 'Visa  Expiration'", $result);
       throw new CRM_Core_Exception('Failed to create activity type \'Visa  Expiration\'');
@@ -90,8 +91,9 @@ function hrvisa_civicrm_install() {
   }
   else {
     $activityTypeId = CRM_Core_OptionGroup::getValue('activity_type', 'Visa Expiration', 'name');
+    
   }
-
+  CRM_Core_Error::debug( '$activityTypeId', $activityTypeId );
   // set weekly reminder for Visa Expiration activities (not active)
   // will be active when extension is enabled
   if (!empty($activityTypeId)) {

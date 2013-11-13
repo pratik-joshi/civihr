@@ -87,6 +87,7 @@ class CRM_HRVisa_Activity {
       else {
         // if no activity create a new one only if 'visa is required'
         if ($isVisaRequired) {
+          CRM_Core_Error::debug_var( '$activityTypeId', $activityTypeId );
           $activityParams = array(
             'target_contact_id' => $contactId,
             'activity_type_id' => $activityTypeId,
@@ -95,6 +96,7 @@ class CRM_HRVisa_Activity {
             'status_id' => CRM_Utils_Array::key('Scheduled', $activityStatuses),
             'details' => 'Visa Expiration',
           );
+          
           $result = civicrm_api3('activity', 'create', $activityParams);
         }
       }
